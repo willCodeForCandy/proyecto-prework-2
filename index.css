@@ -5,6 +5,11 @@
 }
 :root {
   font-family: "Open Sans", open-sans, sans-serif;
+  --primary: #000000;
+  --links: #737373;
+  --highlight: #118000;
+  --important: #bf0019;
+  --trending: #ff6000;
 }
 
 body {
@@ -23,13 +28,51 @@ main {
 .rating {
   display: flex;
 }
-.rating img {
-  height: 24px;
-  width: 24px;
+.icon {
+  height: 18px;
+  width: 18px;
 }
 
 .stats {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.sponsored {
+  font-size: 14px;
+  font-weight: bold;
+  border: 1px solid #adadad;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.free-shipping {
+  font-size: 14px;
+  font-weight: bold;
+  border: 1px solid var(--highlight);
+  color: var(--highlight);
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.trending {
+  font-size: 14px;
+  font-weight: bold;
+  border: 1px solid var(--important);
+  background: linear-gradient(to right, var(--trending) 60%, #ff904a);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  display: flex;
+  gap: 5px;
+}
+
+.seller {
+  color: var(--links);
+}
+
+.promos-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }

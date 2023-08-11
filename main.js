@@ -121,21 +121,8 @@ const productList = [
   },
 ];
 const main$$ = document.querySelector("main");
-let index = 0;
-const createStars = (product) => {
-  if (product.stars) {
-    for (let i = 1; i <= 5; i++) {
-      const star = document.createElement("img");
-      if (i <= product.stars) {
-        star.src = "assets/star-yellow.png";
-      } else {
-        star.src = "assets/star-gray.png";
-      }
-      cardRatings[index].append(star);
-    }
-    index++;
-  }
-};
+
+const createStars = (product) => {};
 
 const createProductCard = (product) => {
   return `
@@ -164,8 +151,44 @@ const createStore = (productList) => {
 createStore(productList);
 
 const cardRatings = document.querySelectorAll(".rating");
-console.log(cardRatings);
+const descriptionDivs = document.querySelectorAll(".product-description");
 
-for (const product of productList) {
-  createStars(product);
+for (let i = 0; i < productList.length; i++) {
+  if (productList[i].stars) {
+    for (let j = 1; j <= 5; j++) {
+      const star = document.createElement("img");
+      if (j <= productList[i].stars) {
+        star.src = "assets/star-yellow.png";
+      } else {
+        star.src = "assets/star-gray.png";
+      }
+      star.classList.add("icon");
+      cardRatings[i].append(star);
+    }
+  }
+  const promosDiv = document.createElement("div");
+  promosDiv.className = "promos-container";
+  descriptionDivs[i].prepend(promosDiv);
+  if (productList[i].freeShipping) {
+    const freeShippingDiv = document.createElement("div");
+    freeShippingDiv.classList.add("free-shipping");
+    freeShippingDiv.innerText = "Envío gratis";
+    promosDiv.appendChild(freeShippingDiv);
+  }
+  if (productList[i].sponsored) {
+    const sponsoredDiv = document.createElement("div");
+    sponsoredDiv.classList.add("sponsored");
+    sponsoredDiv.innerText = "Patrocinado";
+    promosDiv.appendChild(sponsoredDiv);
+  }
+  if (productList[i].trending) {
+    const trendingDiv = document.createElement("div");
+    trendingDiv.classList.add("trending");
+    trendingDiv.innerText = "Trending";
+    const infoIcon = document.createElement("img");
+    infoIcon.src = "assets/info.svg";
+    infoIcon.classList.add("icon");
+    trendingDiv.appendChild(infoIcon);
+    promosDiv.appendChild(trendingDiv);
+  }
 }
