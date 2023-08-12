@@ -16,6 +16,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  display: flex;
 }
 
 main {
@@ -75,4 +76,9 @@ main {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+#price-bar-container {
+  display: flex;
+  justify-content: space-between;
 }

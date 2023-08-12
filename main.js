@@ -101,7 +101,9 @@ const productList = [
   },
 ];
 let filteredProducts = [];
-const main$$ = document.querySelector("main");
+const mainTag = document.querySelector("main");
+const asideTag = document.querySelector("aside");
+
 // Función para crear el esqueleto básico de la tarjeta para cada producto, usando template literals
 const createProductCard = (product) => {
   return `
@@ -170,7 +172,7 @@ const addPromos = (product, parent) => {
 // Función para pintar las tarjetas básicas
 const renderStore = (productList) => {
   for (const product of productList) {
-    main$$.innerHTML += createProductCard(product);
+    mainTag.innerHTML += createProductCard(product);
   }
 };
 // Función para agregar a las tarjetas los modificadores de estellas y promociones
@@ -187,36 +189,66 @@ renderStore(productList);
 // Agrego modificadores una vez que las tarjetas están creadas
 renderPromos();
 
-const asideTag = document.querySelector("aside");
-
-const select = document.querySelector("#ventaja");
-const input = document.querySelector("#precio");
-
+// const select = document.querySelector("#ventaja");
+// const input = document.createElement("input");
+// input.type = "range";
+// asideTag.append(input);
+asideTag.innerHTML = `
+<div id="price-bar-container">
+<span id="minPrice"></span><span id="maxPrice"></span>
+</div>
+<input type="range" name="priceSearch" id="priceSearch">
+<select name="sellerSearch" id="sellerSearch">
+<option>Todos</option>
+</select>`;
+const input = document.querySelector("#priceSearch");
+const select = document.querySelector("#sellerSearch");
 input.max = productList.sort((a, b) => a.price - b.price).at(-1).price;
 input.min = productList.sort((a, b) => a.price - b.price).at(0).price;
+document.querySelector("#minPrice").innerText = `${input.min}€`;
+document.querySelector("#maxPrice").innerText = `${input.max}€`;
 
-const filtrarPrecio = () => {
-  productosFiltrados.splice(0);
-  div.innerHTML = "";
-  // tenemos muchas cosas y quedo únicamente con las que cumplan la condición que yo quiero
-  for (const product of productList) {
-    if (product.price <= input.value) {
-      productosFiltrados.push(product);
+const createSearchCategories = (list) => {
+  let promoCategories = [];
+  for (const product of list) {
+    for (const promo in product.promos) {
+      if (promoCategories.includes(promo)) {
+        return;
+      }
+      promoCategories.push(promo);
+      const option = document.createElement("option");
+      option.innerText = promo;
+      select.appendChild(option);
     }
   }
-  for (const product of productosFiltrados) {
-    div.innerHTML += createProductCard(product);
+};
+createSearchCategories(productList);
+
+const filtrarPrecio = () => {
+  filteredProducts.splice(0);
+  mainTag.innerHTML = "";
+  // tenemos muchas cosas y quedo únicamente con las que cumplan la condición que yo quiero
+  for (const product of productList) {
+    console.log(input.value);
+    if (product.price <= input.value) {
+      filteredProducts.push(product);
+    }
   }
+  for (const product of filteredProducts) {
+    mainTag.innerHTML += createProductCard(product);
+  }
+  renderPromos();
 };
 
 const filtrarTipo = () => {
-  div.innerHTML = "";
-  productosFiltrados = productList.filter(
-    (product) => product[select.value] === true
+  mainTag.innerHTML = "";
+  filteredProducts = productList.filter(
+    (product) => product.promos[select.value] === true
   );
-  for (const product of productosFiltrados) {
-    div.innerHTML += createProductCard(product);
+  for (const product of filteredProducts) {
+    mainTag.innerHTML += createProductCard(product);
   }
+  renderPromos();
 };
 
 input.addEventListener("change", filtrarPrecio);
