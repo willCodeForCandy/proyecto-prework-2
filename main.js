@@ -135,7 +135,7 @@ const createStars = (product, parent) => {
         star.src = "assets/star-gray.png";
       }
       star.classList.add("icon");
-      parent.append(star);
+      parent.appendChild(star);
     }
   }
 };
@@ -179,45 +179,52 @@ const renderStore = (productList) => {
   }
 };
 // Función para agregar a las tarjetas los modificadores de estellas y promociones
-const renderPromos = () => {
+const renderPromos = (listOfProducts) => {
   const cardRatings = document.querySelectorAll(".rating");
   const descriptionDivs = document.querySelectorAll(".product-description");
-  for (let i = 0; i < productList.length; i++) {
-    createStars(productList[i], cardRatings[i]);
-    addPromos(productList[i], descriptionDivs[i]);
+  for (let i = 0; i < listOfProducts.length; i++) {
+    createStars(listOfProducts[i], cardRatings[i]);
+    addPromos(listOfProducts[i], descriptionDivs[i]);
   }
 };
 // Pinto las tarjetas recorriendo el array
 renderStore(productList);
 // Agrego modificadores una vez que las tarjetas están creadas
-renderPromos();
+renderPromos(productList);
 
 //* SECCION DE FILTROS
 // Creo los input de búsqueda con un tag template
 asideTag.innerHTML += `
-<h2>Filtrar productos</h2>
-<button id="clearSearch">Borrar filtros</button>
-<div>
-<div id="price-bar-container">
-<span id="minPrice"></span><span id="maxPrice"></span>
-</div>
-<input type="range" name="priceSearch" id="priceSearch">
-</div>
-<select name="sellerSearch" id="sellerSearch">
-<option>Todos</option>
-</select>`;
+<img src="assets/logo-pccomponentes.svg" alt="logo PC Componentes" id="logo"/>
+<div class="filter-container">
+  <h2>Filtrar productos</h2>
+  <button id="clearSearch">Borrar filtros</button>
+  <div class="filter">
+    <h3>Precio máximo</h3>    
+    <input type="range" name="priceSearch" id="priceSearch">
+    <input type="number" name="maxPrice" id="maxPrice">
+  </div>
+  <div class="filter">
+    <h3>Vendedor </h3>
+    <select name="sellerSearch" id="sellerSearch">
+      <option>Todos</option>
+    </select>
+  </div>
+</div>`;
 
 // Selecciono los input para poder usarlos y agregar event listeners
 const input = document.querySelector("#priceSearch");
 const select = document.querySelector("#sellerSearch");
 const clearSearchBtn = document.querySelector("#clearSearch");
+const numberInput = document.querySelector("#maxPrice");
 
 // Determino precio mínimo y máximo para poner como valores límites del buscador por precio
-input.max = productList.toSorted().at(0).price;
-input.min = productList.toSorted().at(-1).price;
+const sortedList = productList.toSorted((a, b) => a.price - b.price);
+input.min = sortedList.at(0).price;
+input.max = sortedList.at(-1).price + 1; //hice este parche horrible porque como valor máximo se seleccionaba un céntimo menos que el valor más alto y un producto quedaba fuera del filtro si hacía una búsqueda por precio y luego volvía a mover el cursor hasta el final del rango
 input.value = input.max;
-document.querySelector("#minPrice").innerText = `${input.min}€`;
-document.querySelector("#maxPrice").innerText = `${input.max}€`;
+
+maxPrice.value = Math.floor(input.max);
 
 // Obtengo los distintos vendedores a partir del array de productos
 const createSearchCategories = (listOfProducts) => {
@@ -234,7 +241,7 @@ const createSearchCategories = (listOfProducts) => {
   }
 };
 createSearchCategories(productList);
-
+// Creo la función de filtros. Es una sola función que combina precio y seller
 const filterProducts = () => {
   filteredProducts.splice(0);
   mainTag.innerHTML = "";
@@ -254,17 +261,25 @@ const filterProducts = () => {
   for (const product of filteredProducts) {
     mainTag.innerHTML += createProductCard(product);
   }
-  renderPromos();
+  renderPromos(filteredProducts);
 };
-
+// Creo la función para el botón clear filters
 const clearFilters = () => {
   input.value = input.max;
+  maxPrice.value = Math.floor(input.value);
   select.value = "Todos";
   renderStore(productList);
 
-  renderPromos();
+  renderPromos(productList);
 };
-
-input.addEventListener("change", filterProducts);
+// Agrego event listeners para precio, vendedores, y botón de limpiar filtros
+input.addEventListener("change", () => {
+  maxPrice.value = Math.floor(input.value);
+  filterProducts();
+});
 select.addEventListener("change", filterProducts);
 clearSearchBtn.addEventListener("click", clearFilters);
+maxPrice.addEventListener("change", () => {
+  input.value = maxPrice.value;
+  filterProducts();
+});
