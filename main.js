@@ -15,7 +15,7 @@ const productList = [
     discount: false,
     stars: 4,
     reviews: 2653,
-    seller: "PcComponentes",
+    seller: "Microfoft",
     img: "assets/132-tempest-apocalypse-combo-gaming-teclado-raton-auriculares-alfombrilla-comprar.webp",
     promos: { sponsored: false, freeShipping: true, trending: true },
   },
@@ -35,7 +35,7 @@ const productList = [
     discount: false,
     stars: 5,
     reviews: 116,
-    seller: "PcComponentes",
+    seller: "Microfoft",
     img: "assets/1227-forgeon-clutch-teclado-gaming-rgb-60-switch-brown-comprar.webp",
     promos: { sponsored: false, freeShipping: true, trending: false },
   },
@@ -55,7 +55,7 @@ const productList = [
     discount: false,
     stars: 4,
     reviews: 1855,
-    seller: "PcComponentes",
+    seller: "Amiwa",
     img: "assets/1548-tempest-cataclysm-combo-3-en-1-gaming-teclado-raton-alfombrilla-cfdbbc7d-b7f1-4790-9fcd-96ed0a09d067.webp",
     promos: { sponsored: false, freeShipping: false, trending: true },
   },
@@ -75,7 +75,7 @@ const productList = [
     discount: false,
     stars: 5,
     reviews: 666,
-    seller: "PcComponentes",
+    seller: "Amiwa",
     img: "assets/tempest-diablo-teclado-mecanico-gaming-rgb-switch-red-52769723-1c9e-484a-822d-35d37be7d06a.webp",
     promos: { sponsored: false, freeShipping: true, trending: false },
   },
@@ -103,6 +103,8 @@ const productList = [
 let filteredProducts = [];
 const mainTag = document.querySelector("main");
 const asideTag = document.querySelector("aside");
+
+//* SECCION DE PRODUCTOS
 
 // Función para crear el esqueleto básico de la tarjeta para cada producto, usando template literals
 const createProductCard = (product) => {
@@ -171,6 +173,7 @@ const addPromos = (product, parent) => {
 };
 // Función para pintar las tarjetas básicas
 const renderStore = (productList) => {
+  mainTag.innerHTML = "";
   for (const product of productList) {
     mainTag.innerHTML += createProductCard(product);
   }
@@ -189,48 +192,62 @@ renderStore(productList);
 // Agrego modificadores una vez que las tarjetas están creadas
 renderPromos();
 
-// const select = document.querySelector("#ventaja");
-// const input = document.createElement("input");
-// input.type = "range";
-// asideTag.append(input);
-asideTag.innerHTML = `
+//* SECCION DE FILTROS
+// Creo los input de búsqueda con un tag template
+asideTag.innerHTML += `
+<h2>Filtrar productos</h2>
+<button id="clearSearch">Borrar filtros</button>
+<div>
 <div id="price-bar-container">
 <span id="minPrice"></span><span id="maxPrice"></span>
 </div>
 <input type="range" name="priceSearch" id="priceSearch">
+</div>
 <select name="sellerSearch" id="sellerSearch">
 <option>Todos</option>
 </select>`;
+
+// Selecciono los input para poder usarlos y agregar event listeners
 const input = document.querySelector("#priceSearch");
 const select = document.querySelector("#sellerSearch");
-input.max = productList.sort((a, b) => a.price - b.price).at(-1).price;
-input.min = productList.sort((a, b) => a.price - b.price).at(0).price;
+const clearSearchBtn = document.querySelector("#clearSearch");
+
+// Determino precio mínimo y máximo para poner como valores límites del buscador por precio
+input.max = productList.toSorted().at(0).price;
+input.min = productList.toSorted().at(-1).price;
+input.value = input.max;
 document.querySelector("#minPrice").innerText = `${input.min}€`;
 document.querySelector("#maxPrice").innerText = `${input.max}€`;
 
-const createSearchCategories = (list) => {
-  let promoCategories = [];
-  for (const product of list) {
-    for (const promo in product.promos) {
-      if (promoCategories.includes(promo)) {
-        return;
-      }
-      promoCategories.push(promo);
-      const option = document.createElement("option");
-      option.innerText = promo;
-      select.appendChild(option);
+// Obtengo los distintos vendedores a partir del array de productos
+const createSearchCategories = (listOfProducts) => {
+  let sellers = [];
+  for (const product of listOfProducts) {
+    if (!sellers.includes(product.seller)) {
+      sellers.push(product.seller);
     }
+  }
+  for (const seller of sellers) {
+    const option = document.createElement("option");
+    option.innerText = seller;
+    select.appendChild(option);
   }
 };
 createSearchCategories(productList);
 
-const filtrarPrecio = () => {
+const filterProducts = () => {
   filteredProducts.splice(0);
   mainTag.innerHTML = "";
   // tenemos muchas cosas y quedo únicamente con las que cumplan la condición que yo quiero
   for (const product of productList) {
-    console.log(input.value);
-    if (product.price <= input.value) {
+    if (select.value === "Todos") {
+      filteredProducts = productList.filter(
+        (product) => product.price <= input.value
+      );
+    } else if (
+      product.price <= input.value &&
+      product.seller === select.value
+    ) {
       filteredProducts.push(product);
     }
   }
@@ -240,16 +257,14 @@ const filtrarPrecio = () => {
   renderPromos();
 };
 
-const filtrarTipo = () => {
-  mainTag.innerHTML = "";
-  filteredProducts = productList.filter(
-    (product) => product.promos[select.value] === true
-  );
-  for (const product of filteredProducts) {
-    mainTag.innerHTML += createProductCard(product);
-  }
+const clearFilters = () => {
+  input.value = input.max;
+  select.value = "Todos";
+  renderStore(productList);
+
   renderPromos();
 };
 
-input.addEventListener("change", filtrarPrecio);
-select.addEventListener("change", filtrarTipo);
+input.addEventListener("change", filterProducts);
+select.addEventListener("change", filterProducts);
+clearSearchBtn.addEventListener("click", clearFilters);
