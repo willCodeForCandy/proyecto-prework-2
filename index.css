@@ -202,7 +202,8 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:hover,
+#menu-btn:hover {
   background-color: #adadad17;
   transition: 0.4s;
 }
