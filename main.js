@@ -103,6 +103,21 @@ const productList = [
 let filteredProducts = [];
 const mainTag = document.querySelector("main");
 const asideTag = document.querySelector("aside");
+const headerTag = document.createElement("header");
+headerTag.innerHTML = `
+<div id="logo">
+  <img src="assets/logo-pccomponentes.svg" alt="logo PC Componentes" />
+</div>
+<h1>Teclados Mecánicos</h1>
+<div id="menu-btn">
+<h2>Filtrar</h2>
+</div>
+`;
+document.body.prepend(headerTag);
+searchToggler = document.querySelector("#menu-btn");
+searchToggler.addEventListener("click", () => {
+  document.body.classList.toggle("with-aside");
+});
 
 //* SECCION DE PRODUCTOS
 
@@ -195,12 +210,11 @@ renderPromos(productList);
 //* SECCION DE FILTROS
 // Creo los input de búsqueda con un tag template
 asideTag.innerHTML += `
-<img src="assets/logo-pccomponentes.svg" alt="logo PC Componentes" id="logo"/>
 <div class="filter-container">
   <h2>Filtrar productos</h2>
   <button id="clearSearch">Borrar filtros</button>
   <div class="filter">
-    <h3>Precio máximo</h3>    
+    <h3>Precio máximo</h3>
     <input type="range" name="priceSearch" id="priceSearch">
     <input type="number" name="maxPrice" id="maxPrice">
   </div>
