@@ -104,6 +104,7 @@ let filteredProducts = [];
 const mainTag = document.querySelector("main");
 const asideTag = document.querySelector("aside");
 const headerTag = document.createElement("header");
+const footerTag = document.createElement("footer");
 headerTag.innerHTML = `
 <div id="logo">
   <img src="assets/logo-pccomponentes.svg" alt="logo PC Componentes" />
@@ -115,10 +116,9 @@ headerTag.innerHTML = `
 `;
 document.body.prepend(headerTag);
 searchToggler = document.querySelector("#menu-btn");
-searchToggler.addEventListener("click", () => {
-  document.body.classList.toggle("with-aside");
-});
-
+footerTag.innerHTML = `
+<p>&copy; Viru Raschia 2023</p>`;
+document.body.append(footerTag);
 //* SECCION DE PRODUCTOS
 
 // Función para crear el esqueleto básico de la tarjeta para cada producto, usando template literals
@@ -296,4 +296,7 @@ clearSearchBtn.addEventListener("click", clearFilters);
 maxPrice.addEventListener("change", () => {
   input.value = maxPrice.value;
   filterProducts();
+});
+searchToggler.addEventListener("click", () => {
+  document.body.classList.toggle("with-aside");
 });

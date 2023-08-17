@@ -59,6 +59,14 @@ header {
   justify-content: space-between;
 }
 
+footer {
+  flex: 1 100%;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--borders);
+  padding: 15px;
+}
+
 #logo {
   max-width: 180px;
   height: auto;
